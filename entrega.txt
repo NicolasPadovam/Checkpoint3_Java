@@ -1,0 +1,11 @@
+Check Point 3 - Microservices and Web Engineering - 2º semestre/2026
+
+Repositório GitHub:     https://github.com/<usuario>/<repositorio>
+Imagem Docker Hub:      https://hub.docker.com/r/<usuario-dockerhub>/modelocarro
+Aplicação Azure:        https://<rm>-modelocarro.<hash>.brazilsouth.azurecontainerapps.io
+Documentação Swagger:   https://<url-azure>/
+OpenAPI (JSON):         https://<url-azure>/v3/api-docs
+
+Integrantes:
+- Nicolas Varella Barros Padovam - RM 556586
+- Vitor Portela Fantinato - RM 554540

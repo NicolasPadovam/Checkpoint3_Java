@@ -1,0 +1,44 @@
+# Sobe o SQL Server + a API localmente: docker compose up -d --build
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "1q2w3e4R@"
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '1q2w3e4R@' -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    entrypoint: >
+      /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "1q2w3e4R@" -C
+      -Q "IF DB_ID('api') IS NULL CREATE DATABASE api"
+    restart: "no"
+
+  api:
+    build: .
+    image: modelocarro:local
+    container_name: modelocarro-api
+    depends_on:
+      sqlserver-init:
+        condition: service_completed_successfully
+    environment:
+      SPRING_PROFILES_ACTIVE: prd
+      DB_SERVER_URL: sqlserver
+      DB_SERVER_PORT: 1433
+      DB_SCHEMA: api
+      DB_USER: sa
+      DB_PWD: "1q2w3e4R@"
+      DB_ENCRYPT: "false"
+      DB_TRUST_CERT: "true"
+    ports:
+      - "8080:8080"
